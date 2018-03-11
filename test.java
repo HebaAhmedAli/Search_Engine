@@ -31,14 +31,7 @@ public class test {
 
        System.out.println("Server is ready ");
 
-
-        DBCollection collection = db.getCollection("collection");
-        BasicDBObject document = new BasicDBObject();
-        document.put("hosting", "hostA");
-        document.put("type", "vps");
-        document.put("clients", 1000);
-        collection.insert(document);
-
+        DBCollection collection = db.getCollection("search");
         System.out.println("after insertion");
         DBCursor dbCursor = collection.find();
         while(dbCursor.hasNext()){
