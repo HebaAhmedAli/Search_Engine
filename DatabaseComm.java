@@ -7,8 +7,10 @@ import java.util.*;
 public class DatabaseComm {
 
 //    public String url;
-    int occurence;
-    Map<String, Integer > wordtags;
+    public int occurence;
+    public Map<String, Integer > wordtags;
+
+
 
     public DatabaseComm(){
         wordtags=new HashMap<String,Integer >();

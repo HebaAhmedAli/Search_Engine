@@ -1,48 +1,63 @@
-//package com.mkyong.basicwebcrawler;
+package web_crawler_try;
+
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.tartarus.snowball.SnowballStemmer;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.HashSet;
 
-
 public class BasicWebCrawler {
+
     private HashSet<String> links;
-    private static final int MAX_DEPTH =2;
+
     public BasicWebCrawler() {
         links = new HashSet<String>();
     }
-    public void getPageLinks(String URL, int depth) {
+
+    public void getPageLinks(String URL) {
         //4. Check if you have already crawled the URLs
         //(we are intentionally not checking for duplicate content in this example)
-        if (!links.contains(URL)&& (depth < MAX_DEPTH)) {
-            System.out.println(">> Depth: " + depth + " [" + URL + "]");
+    	
+        if (!links.contains(URL)) {
             try {
                 //4. (i) If not add it to the index
                 if (links.add(URL)) {
                     System.out.println(URL);
                 }
+
                 //2. Fetch the HTML code
-                Document document = Jsoup.connect(URL).get();
+               Document document = Jsoup.connect(URL).get();
                 //3. Parse the HTML to extract links to other URLs
-                Elements linksOnPage = document.select("a[video]");
-                document.select("p");
-                ++depth;
+               Elements linksOnPage = document.select("a[href]");
+
                 //5. For each extracted URL... go back to Step 4.
                 for (Element page : linksOnPage) {
-                    getPageLinks(page.attr("abs:video"),depth);
+                	System.out.println(page.attr("abs:href"));
                 }
+   
+           
+      
+                    
             } catch (IOException e) {
                 System.err.println("For '" + URL + "': " + e.getMessage());
             }
-
         }
     }
+
+    public static void main(String[] args) throws IOException {
+        //1. Pick a URL from the frontier
+       new BasicWebCrawler().getPageLinks("https://www.geeksforgeeks.org/selection-sort/");
+    	
+       /*Document doc = Jsoup.connect("https://www.youtube.com/").get();
+        Elements iframeEl = doc.select("iframe");
+       
+        for (Element page : iframeEl) {
+        	System.out.println(page.attr("src"));
+        }*/
+        
+    }
+
 }
-
-
-
