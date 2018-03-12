@@ -15,6 +15,8 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
+
 import mpi.*;
 
 public class indexer implements Serializable{
@@ -35,12 +37,14 @@ public class indexer implements Serializable{
 		} catch (MongoException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
 		}
-		
+
 		while(true) {
 			recv_from_crawler( url, d);
 			try{
-                textTags.indexing(d);
+                textTags.indexing(d,url.toString());
             }catch (IOException e){
 			    System.out.println(e);
             }

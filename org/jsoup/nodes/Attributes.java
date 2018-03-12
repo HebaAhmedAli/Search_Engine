@@ -411,7 +411,7 @@ public class Attributes implements Iterable<Attribute>, Cloneable {
             @Override
             public int size() {
                 int count = 0;
-                Iterator iter = new DatasetIterator();
+                Iterator<Entry<String, String>> iter = new DatasetIterator();
                 while (iter.hasNext())
                     count++;
                 return count;

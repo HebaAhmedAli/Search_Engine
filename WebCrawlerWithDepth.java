@@ -8,7 +8,7 @@ import org.jsoup.UncheckedIOException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.omg.CORBA.portable.InputStream;
+//import org.omg.CORBA.portable.InputStream;
 import org.w3c.dom.Node;
 
 import java.awt.List;
@@ -384,6 +384,8 @@ public class WebCrawlerWithDepth implements Runnable, Serializable {
 		} catch (MongoException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
 		}
 
 		try {

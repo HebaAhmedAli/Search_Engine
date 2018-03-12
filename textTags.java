@@ -16,7 +16,7 @@ import java.util.*;
 public class textTags {
 
     public static stopwords checkStopWord;
-   public static boolean isRecrawling=true;
+    public static boolean isRecrawling=true;
 
 
 
@@ -43,21 +43,19 @@ public class textTags {
 
     }
 
-    public static void indexing(Document doc) throws IOException {
+
+
+
+    public static void indexing(Document doc,String url) throws IOException {
 
         checkStopWord=new stopwords();
         textTags teTags=new textTags();
-        String file="test2.html"; //get from url
         //unique for the check on the whole txt afterwards
         final String[] neededTags={"p","pre","span","li","h1","h2", "h3", "h4", "h5", "h6"};
-
-//        BufferedReader reader = new BufferedReader(new FileReader (file));
-        String url="";
-
         FileWriter outstream= new FileWriter ("outb2a.txt");
-
         Map<String,DatabaseComm> objToInsert=new HashMap<String,DatabaseComm>();
         DB db=null;
+
         try {
 
             MongoClient mongoClient = new MongoClient("localhost", 27017);
@@ -67,15 +65,8 @@ public class textTags {
         } catch (Exception e) {
             System.out.println(e);
         }
-
-
         System.out.println("Server is ready ");
-
-
         DBCollection collection = db.getCollection("wordsIndex");
-
-
-
 
 
         /*
@@ -89,8 +80,6 @@ public class textTags {
             BasicDBObject q1 = new BasicDBObject();
             BasicDBObject q2 = new BasicDBObject();
             BasicDBObject q3 = new BasicDBObject();
-            BasicDBObject q4 = new BasicDBObject();
-
 
             q1.put("url",url);
             q2.put("",q1);
@@ -109,7 +98,7 @@ public class textTags {
             BasicDBObject b3 = new BasicDBObject();
             BasicDBObject b4 = new BasicDBObject();
             BasicDBObject b5 = new BasicDBObject();
-            BasicDBObject b6 = new BasicDBObject();
+
             b2.put("url",url );
             b3.put("urls",b2);
             b4.put("$pull",b3);
@@ -170,8 +159,6 @@ public class textTags {
                     if(word.length()==1&&word!="a")
                         continue;
 
-                    if(word.length()<=1&& word!="a")
-                        continue;
 
                     if (! objToInsert.containsKey(word))
                         objToInsert.put(word,new DatabaseComm());
@@ -187,7 +174,8 @@ public class textTags {
 
 
         String[] words = innerBody.split(" ");
-        for (String word : words){
+        for (int i = 0; i < words.length; i++) {
+            String word=words[i];
             if (objToInsert.containsKey(word))
                 continue;
 
@@ -201,6 +189,8 @@ public class textTags {
             if (! objToInsert.containsKey(word))
                 objToInsert.put(word,new DatabaseComm());
 
+            //positions of the word in inner body
+            objToInsert.get(word).addPosition(i);
             objToInsert.get(word).insertWord("p");
 
         }
@@ -211,7 +201,6 @@ public class textTags {
 
 
             BasicDBObject theWord = new BasicDBObject();
-
             theWord.put("word",insert.getKey());
 
             DBCursor dbCursor = collection.find(theWord);
@@ -224,21 +213,14 @@ public class textTags {
                 collection.update(new BasicDBObject().append("word",insert.getKey()),idfinc);
 
 
-                List<BasicDBObject> occurence = new ArrayList<>();
-                for (Map.Entry<String, Integer> tagsOccur : insert.getValue().getWordtags().entrySet()) {
-
-                    BasicDBObject occurenceTag = new BasicDBObject();
-                    occurenceTag.put("tagName", tagsOccur.getKey());
-                    occurenceTag.put("numOccur", tagsOccur.getValue());
-                    occurence.add(occurenceTag);
-
-                }
+                List<BasicDBObject> occurrence = new ArrayList<>();
 
 
                 BasicDBObject urlObject = new BasicDBObject();
                 urlObject.put("url", url);
                 urlObject.put("tf", insert.getValue().getOccurence());
-                urlObject.put("occurence", occurence);
+                urlObject.put("occurence", insert.getValue().getTagOccurrences());
+//                urlObject.put("positions", insert.getValue().getPositions());
 
                 BasicDBObject tempisa = new BasicDBObject();
                 tempisa.put("$addToSet", new BasicDBObject().append("urls", urlObject));
@@ -246,89 +228,28 @@ public class textTags {
 
             }
             else {
-                // the word isnot inserted yeeeeet
+                // the word is not inserted yeeeeet
                 // lets insert it b2a
                 if (insert.getKey()=="")
                     continue;
-                System.out.println("ana awl mra ashof l kelma d");
+
                 theWord.put("idf", 1);
-                List<BasicDBObject> occurence = new ArrayList<>();
-                for (Map.Entry<String, Integer> tagsOccur : insert.getValue().getWordtags().entrySet()) {
 
-                    BasicDBObject occurenceTag = new BasicDBObject();
-                    occurenceTag.put("tagName", tagsOccur.getKey());
-                    occurenceTag.put("numOccur", tagsOccur.getValue());
-                    occurence.add(occurenceTag);
 
-                }
 
                 List<BasicDBObject> URLs = new ArrayList<>();
                 BasicDBObject urlObject = new BasicDBObject();
                 urlObject.put("url", url);
                 urlObject.put("tf", insert.getValue().getOccurence());
-                urlObject.put("occurence", occurence);
+                urlObject.put("occurrence", insert.getValue().getTagOccurrences());
+//                urlObject.put("positions", insert.getValue().getPositions());
 
                 URLs.add(urlObject);
                 theWord.put("urls", URLs);
 
                 collection.insert(theWord);
             }
-
-            }
-
-
-            outstream.close();
+        }
+        outstream.close();
     }
 }
-//    void insert_map_in_db()
-//    {
-//        DBCollection collection = database.getCollection("url");
-//        System.out.println("collec " + collection);
-//
-//        for (String key : links.keySet()) {
-//
-//            for(String value: links.get(key)) {
-//
-//                if(!(value.equals("no parent") ||  value.equals("same parent"))) {
-//
-//                    //get the id of the parent url by its name and selects only the field url_name to return
-//                    DBCursor cursor = collection.find(new BasicDBObject("url_name", value),new BasicDBObject("url_name",1));
-//
-//                    //---?? leeh de while
-//                    while(cursor.hasNext()) {
-//                        //System.out.println("only one parent at a time for "+ key);
-//                        BasicDBObject object = (BasicDBObject) cursor.next();
-//                        //  String parenturl_id = object.getString("url_name");
-//
-//
-//
-//                        //append the parenturl_id  to the url which is the key in the map (and it already exists in the DB)
-//                        BasicDBObject newDocument = new BasicDBObject();
-//                        newDocument.append("$push", new BasicDBObject().append("in_links_id", object.getObjectId("_id") ));  //to be added to in_links_id
-//
-//                        BasicDBObject searchQuery = new BasicDBObject().append("url_name", key);
-//
-//                        collection.update(searchQuery, newDocument);
-//                    }
-//                }
-//            }
-//        }
-//    }
-//    void insert_url_in_db(String url_name, String d,int out_links)
-//    {
-//        DBCollection collection = database.getCollection("url");
-//        BasicDBObject url = new BasicDBObject();
-//
-//        url.put("url_name", url_name);
-//        url.put("pr", priority);
-//        priority++;
-//        if(url_name.contains("/watch?v=")||(url_name.contains("youtube")&&url_name.contains("embed")))
-//            url.put("is_video", true);
-//        else
-//            url.put("is_video", false);
-//
-//        url.put("document", d);
-//        url.put("out_links_no", out_links);
-//
-//        collection.insert(url);
-//    }
