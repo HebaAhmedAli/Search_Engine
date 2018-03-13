@@ -8,8 +8,11 @@ import java.util.*;
 public class DatabaseComm {
 
      int occurence;
-    ArrayList<Integer> positions;
+     String tag;
+     ArrayList<Integer> positions;
      Map<String, Integer > wordtags;
+
+    final static String[] neededTags={"p","pre","span","li","h1","h2", "h3", "h4", "h5", "h6"};
 
 
     public void addPosition(int pos) {
@@ -22,9 +25,11 @@ public class DatabaseComm {
     }
 
     public DatabaseComm(){
-        wordtags=new HashMap<String,Integer >();
+//        wordtags=new HashMap<String,Integer >();
         positions=new ArrayList<Integer>();
         occurence=0;
+        tag=new String();
+        tag="p";
     }
 
     public int getOccurence() {
@@ -59,6 +64,14 @@ public class DatabaseComm {
         return  occurrence;
 
     }
+    public String getTag(){
 
+        return tag;
 
+    }
+    public String changeTag(){
+
+        return tag="h";
+
+    }
 }

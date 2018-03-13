@@ -14,7 +14,7 @@ public class test {
 
 
             MongoClient mongoClient = new MongoClient("localhost", 27017);
-            db = mongoClient.getDB("indexerTest");
+            db = mongoClient.getDB("search_engine");
             System.out.println("Connected to Database");
 
 
@@ -37,24 +37,34 @@ public class test {
 *
 * nm7 kol ele y7os l url
 * */
-        String SURL="";
+        String SURL="https://www.geeksforgeeks.org/";
         BasicDBObject q1 = new BasicDBObject();
         BasicDBObject q2 = new BasicDBObject();
         BasicDBObject q3 = new BasicDBObject();
 
         q1.put("url",SURL);
         q2.put("",q1);
-        q3.put("urls",q2);
+        q3.put("urls",q1);
 
-        DBCursor result = collection.find(q3);
+        DBObject update_idf = new BasicDBObject();
+        update_idf.put("$inc", new BasicDBObject("idf", -1));
+        collection.updateMulti(q3, update_idf);
+        
+        DBObject update = new BasicDBObject();
+		update.put("$pull", q3);
+		collection.updateMulti(q3, update);
+		
+		
+         System.out.println("5alst ya bashr...");
+        /*DBCursor result = collection.find(q3);
         while (result.hasNext()) {
             BasicDBObject querry = (BasicDBObject) result.next();//new BasicDBObject("url",SURL);
             DBObject update_idf = new BasicDBObject();
             update_idf.put("$inc", new BasicDBObject("idf", -1));
             collection.updateMulti(querry, update_idf);
 
-        }
-        BasicDBObject b1 = new BasicDBObject();
+        }*/
+      /*  BasicDBObject b1 = new BasicDBObject();
         BasicDBObject b2 = new BasicDBObject();
         BasicDBObject b3 = new BasicDBObject();
         BasicDBObject b4 = new BasicDBObject();
@@ -102,7 +112,7 @@ public class test {
 //        tempisa.put("$push", new BasicDBObject().append("urls", urlObject));
 //        collection.update(new BasicDBObject().append("word","shallow"),tempisa);
 
-
+*/
     }
 
 

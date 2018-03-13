@@ -16,7 +16,11 @@ import java.util.*;
 public class textTags {
 
     public static stopwords checkStopWord;
-    public static boolean isRecrawling=true;
+    public static boolean isRecrawling=false;
+    static List<DBObject> newWords=new ArrayList<DBObject>();
+
+    //sam3???
+    //Ah ana sam3ak 7elw gedan kman
 
 
 
@@ -51,7 +55,7 @@ public class textTags {
         checkStopWord=new stopwords();
         textTags teTags=new textTags();
         //unique for the check on the whole txt afterwards
-        final String[] neededTags={"p","pre","span","li","h1","h2", "h3", "h4", "h5", "h6"};
+        final String[] neededTags={"h1","h2", "h3", "h4", "h5", "h6"};//"p","pre","span","li",
         FileWriter outstream= new FileWriter ("outb2a.txt");
         Map<String,DatabaseComm> objToInsert=new HashMap<String,DatabaseComm>();
         DB db=null;
@@ -62,12 +66,15 @@ public class textTags {
             db = mongoClient.getDB("indexerTest");
             System.out.println("Connected to Database");
 
+
         } catch (Exception e) {
             System.out.println(e);
         }
         System.out.println("Server is ready ");
         DBCollection collection = db.getCollection("wordsIndex");
-
+        BasicDBObject indexWord = new BasicDBObject();
+        indexWord.put("word","a");
+        collection.createIndex(indexWord);
 
         /*
          *
@@ -107,36 +114,6 @@ public class textTags {
 
             collection.update(b1,b4,false,true);
 
-            ///////////////////////////////////////////////////
-            ////////////////////////////////////////////////
-
-
-//
-//                    BasicDBObject idfinc = new  BasicDBObject().append("$inc",
-//                            new BasicDBObject().append("idf", -1));
-//
-//                    collection.update(new BasicDBObject().append("word",insert.getKey()),idfinc);
-//
-//
-//                    BasicDBObject pullURL = new  BasicDBObject().append("$pullAll",
-//                            new BasicDBObject().append("idf", 1));
-//
-//                    BasicDBObject urlObject = new BasicDBObject();
-//                    urlObject.put("url", url);
-//
-//                   // BasicDBObject urls = new BasicDBObject();
-//                    List<BasicDBObject> URLs = new ArrayList<>();
-//                    URLs.add(urlObject);
-//
-//
-//
-//
-//                    BasicDBObject tempisa = new BasicDBObject();
-//
-//                    tempisa.put("$pullAll", new BasicDBObject().append("urls", URLs));
-//                    collection.update(new BasicDBObject().append("urls",url),tempisa);
-
-
         }
 
 
@@ -160,10 +137,13 @@ public class textTags {
                         continue;
 
 
-                    if (! objToInsert.containsKey(word))
+                    if (! objToInsert.containsKey(word)){
                         objToInsert.put(word,new DatabaseComm());
+                        objToInsert.get(word).changeTag();
 
-                    objToInsert.get(word).insertWord(tag);
+
+                    }
+
 
                     outstream.write(word + " ");
 
@@ -191,14 +171,11 @@ public class textTags {
 
             //positions of the word in inner body
             objToInsert.get(word).addPosition(i);
-            objToInsert.get(word).insertWord("p");
 
         }
 
 
         for (Map.Entry<String,DatabaseComm> insert:objToInsert.entrySet()){
-
-
 
             BasicDBObject theWord = new BasicDBObject();
             theWord.put("word",insert.getKey());
@@ -213,14 +190,11 @@ public class textTags {
                 collection.update(new BasicDBObject().append("word",insert.getKey()),idfinc);
 
 
-                List<BasicDBObject> occurrence = new ArrayList<>();
-
-
                 BasicDBObject urlObject = new BasicDBObject();
                 urlObject.put("url", url);
                 urlObject.put("tf", insert.getValue().getOccurence());
-                urlObject.put("occurence", insert.getValue().getTagOccurrences());
-//                urlObject.put("positions", insert.getValue().getPositions());
+                urlObject.put("tag",insert.getValue().getTag());
+                urlObject.put("positions",insert.getValue().getPositions());
 
                 BasicDBObject tempisa = new BasicDBObject();
                 tempisa.put("$addToSet", new BasicDBObject().append("urls", urlObject));
@@ -235,21 +209,24 @@ public class textTags {
 
                 theWord.put("idf", 1);
 
-
-
                 List<BasicDBObject> URLs = new ArrayList<>();
                 BasicDBObject urlObject = new BasicDBObject();
                 urlObject.put("url", url);
                 urlObject.put("tf", insert.getValue().getOccurence());
-                urlObject.put("occurrence", insert.getValue().getTagOccurrences());
-//                urlObject.put("positions", insert.getValue().getPositions());
+                urlObject.put("tag",insert.getValue().getTag());
+                urlObject.put("positions",insert.getValue().getPositions());
 
                 URLs.add(urlObject);
                 theWord.put("urls", URLs);
-
-                collection.insert(theWord);
+                newWords. add(theWord);
+//                collection.insert(theWord);
             }
+            collection.insert(newWords);
+
         }
+
+
         outstream.close();
+
     }
 }
