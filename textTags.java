@@ -16,7 +16,7 @@ import java.util.*;
 public class textTags {
 
     public static stopwords checkStopWord;
-    public static boolean isRecrawling=false;
+//    public static boolean isRecrawling=false;
     static List<DBObject> newWords=new ArrayList<DBObject>();
 
     //sam3???
@@ -50,13 +50,13 @@ public class textTags {
 
 
 
-    public static void indexing(Document doc,String url) throws IOException {
+    public static void indexing(Document doc,String url,boolean isRecrawling) throws IOException {
 
         checkStopWord=new stopwords();
         textTags teTags=new textTags();
         //unique for the check on the whole txt afterwards
         final String[] neededTags={"h1","h2", "h3", "h4", "h5", "h6"};//"p","pre","span","li",
-        FileWriter outstream= new FileWriter ("outb2a.txt");
+//        FileWriter outstream= new FileWriter ("outb2a.txt");
         Map<String,DatabaseComm> objToInsert=new HashMap<String,DatabaseComm>();
         DB db=null;
 
@@ -105,7 +105,7 @@ public class textTags {
             BasicDBObject b3 = new BasicDBObject();
             BasicDBObject b4 = new BasicDBObject();
             BasicDBObject b5 = new BasicDBObject();
-
+        //subdoc content -> uongodrl w byms7o 4la tool
             b2.put("url",url );
             b3.put("urls",b2);
             b4.put("$pull",b3);
@@ -122,35 +122,35 @@ public class textTags {
 
         String innerBody=doc.select("body").text();
         /////////////////////////////////////////////////
-        for (String tag:neededTags) {
-            outstream.write("USED TAG: "+tag+'\n');
-            for (Element element : doc.select(tag)) {
-
-                String[] words = element.text().split(" ");
-
-                for (String word : words) {
-
-                    word=teTags.modifyWord(word,tag);
-                    if(word==null)
-                        continue;
-                    if(word.length()==1&&word!="a")
-                        continue;
-
-
-                    if (! objToInsert.containsKey(word)){
-                        objToInsert.put(word,new DatabaseComm());
-                        objToInsert.get(word).changeTag();
-
-
-                    }
-
-
-                    outstream.write(word + " ");
-
-                }
-
-            }
-        }
+//        for (String tag:neededTags) {
+////            outstream.write("USED TAG: "+tag+'\n');
+//            for (Element element : doc.select(tag)) {
+//
+//                String[] words = element.text().split(" ");
+//
+//                for (String word : words) {
+//
+//                    word=teTags.modifyWord(word,tag);
+//                    if(word==null)
+//                        continue;
+//                    if(word.length()==1&&word!="a")
+//                        continue;
+//
+//
+//                    if (! objToInsert.containsKey(word)){
+//                        objToInsert.put(word,new DatabaseComm());
+//                        objToInsert.get(word).changeTag();
+//
+//
+//                    }
+//
+//
+////                    outstream.write(word + " ");
+//
+//                }
+//
+//            }
+//        }
 
 
         String[] words = innerBody.split(" ");
@@ -165,7 +165,7 @@ public class textTags {
             if(word.length()==1&&word!="a")
                 continue;
 
-            outstream.write(word + " ");
+//            outstream.write(word + " ");
             if (! objToInsert.containsKey(word))
                 objToInsert.put(word,new DatabaseComm());
 
@@ -189,15 +189,18 @@ public class textTags {
                         new BasicDBObject().append("idf", 1));
                 collection.update(new BasicDBObject().append("word",insert.getKey()),idfinc);
 
-
+                //da ele gwa l array ele gwa
                 BasicDBObject urlObject = new BasicDBObject();
                 urlObject.put("url", url);
                 urlObject.put("tf", insert.getValue().getOccurence());
                 urlObject.put("tag",insert.getValue().getTag());
                 urlObject.put("positions",insert.getValue().getPositions());
 
+                //b7oto fe array b2a
                 BasicDBObject tempisa = new BasicDBObject();
-                tempisa.put("$addToSet", new BasicDBObject().append("urls", urlObject));
+
+                BasicDBObject llfind = new BasicDBObject();llfind.put("positions",urlObject);
+                tempisa.put("$addToSet", new BasicDBObject().append("docs", llfind));
                 collection.update(new BasicDBObject().append("word",insert.getKey()),tempisa);
 
             }
@@ -221,12 +224,11 @@ public class textTags {
                 newWords. add(theWord);
 //                collection.insert(theWord);
             }
-            collection.insert(newWords);
 
         }
 
-
-        outstream.close();
+        collection.insert(newWords);
+//        outstream.close();
 
     }
 }
