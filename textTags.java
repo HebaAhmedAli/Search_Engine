@@ -200,7 +200,7 @@ public class textTags {
                 BasicDBObject tempisa = new BasicDBObject();
 
                 BasicDBObject llfind = new BasicDBObject();llfind.put("positions",urlObject);
-                tempisa.put("$addToSet", new BasicDBObject().append("docs", llfind));
+                tempisa.put("$addToSet", new BasicDBObject().append("urls", llfind));
                 collection.update(new BasicDBObject().append("word",insert.getKey()),tempisa);
 
             }
@@ -228,7 +228,6 @@ public class textTags {
         }
 
         collection.insert(newWords);
-//        outstream.close();
 
     }
 }

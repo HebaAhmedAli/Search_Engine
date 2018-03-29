@@ -1,6 +1,7 @@
 
 
 import com.mongodb.*;
+import com.mongodb.bulk.BulkWriteResult;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -16,42 +17,26 @@ import java.util.*;
 public class textTags1 {
 
     public static stopwords checkStopWord;
+    static List<DBObject> newWords=new ArrayList<DBObject>();
 
 
-     public String modifyWord(String word,String tag){
 
-        Stemmer porterStemmer = new Stemmer();
-        word=word.toLowerCase();
-        //Check if Stop word
-        if(tag=="p"||tag=="span"||tag=="pre")
-            if(checkStopWord.ifStopWords(word))
-               return"";
 
-        if(checkStopWord.ifCitation(word))
-            return"";
-
-        //Check if special character
-         word=word.replaceAll("[^a-zA-Z0-9]", "");
-
-        //else that: Stem the word
-        porterStemmer.add(word);
-        porterStemmer.stem();
-        return porterStemmer.toString();
-
-    }
 
     public static void main(String[] args) throws IOException {
 
         checkStopWord=new stopwords();
         textTags1 teTags=new textTags1();
+        int updateBulk=0;
         String file="test2.html"; //get from url
         //unique for the check on the whole txt afterwards
-        final String[] neededTags={"p","pre","span","li","h1","h2", "h3", "h4", "h5", "h6"};
+        final String[] neededTags={"h1","h2", "h3", "h4", "h5", "h6"};
 
         BufferedReader reader = new BufferedReader(new FileReader (file));
         String line,getIt="",url="";
 
-        FileWriter outstream= new FileWriter ("outb2a.txt");
+
+//        FileWriter outstream= new FileWriter ("outb2a.txt");
 
         Map<String,DatabaseComm> objToInsert=new HashMap<String,DatabaseComm>();
         DB db=null;
@@ -69,6 +54,7 @@ public class textTags1 {
         DBCollection collection = db.getCollection("wordsIndex");
 
 
+
         try {
             while((line = reader.readLine()) != null) {
                 getIt+=line;
@@ -83,7 +69,7 @@ public class textTags1 {
         /////////////////////////////////////////////////
                 /////////////////////////////////////////////////
         for (String tag:neededTags) {
-            outstream.write("USED TAG: "+tag+'\n');
+//            outstream.write("USED TAG: "+tag+'\n');
             for (Element element : doc.select(tag)) {
 
                 String[] words = element.text().split(" ");
@@ -97,12 +83,15 @@ public class textTags1 {
                         continue;
 
 
-                    if (! objToInsert.containsKey(word))
+                    if (! objToInsert.containsKey(word)){
                         objToInsert.put(word,new DatabaseComm());
+                        objToInsert.get(word).changeTag();
 
-                    objToInsert.get(word).insertWord(tag);
 
-                    outstream.write(word + " ");
+                    }
+
+
+//                    outstream.write(word + " ");
 
                 }
 
@@ -112,7 +101,9 @@ public class textTags1 {
 
         String[] words = innerBody.split(" ");
         for (int i = 0; i < words.length; i++) {
+            String wordInURLObject=words[i];
             String word=words[i];
+
             if (objToInsert.containsKey(word))
                 continue;
 
@@ -122,13 +113,13 @@ public class textTags1 {
             if(word.length()==1&&word!="a")
                 continue;
 
-            outstream.write(word + " ");
-            if (! objToInsert.containsKey(word))
+//            outstream.write(word + " ");
+            if (! objToInsert.containsKey(word)){
                 objToInsert.put(word,new DatabaseComm());
+            }
 
             //positions of the word in inner body
             objToInsert.get(word).addPosition(i);
-            objToInsert.get(word).insertWord("p");
 
         }
 
@@ -148,19 +139,23 @@ public class textTags1 {
                 collection.update(new BasicDBObject().append("word",insert.getKey()),idfinc);
 
 
-                List<BasicDBObject> occurrence = new ArrayList<>();
-
-
                 BasicDBObject urlObject = new BasicDBObject();
                 urlObject.put("url", url);
                 urlObject.put("tf", insert.getValue().getOccurence());
-                urlObject.put("occurence", insert.getValue().getTagOccurrences());
-//                urlObject.put("positions", insert.getValue().getPositions());
+                urlObject.put("tag",insert.getValue().getTag());
 
                 BasicDBObject tempisa = new BasicDBObject();
                 tempisa.put("$addToSet", new BasicDBObject().append("urls", urlObject));
-                collection.update(new BasicDBObject().append("word",insert.getKey()),tempisa);
 
+
+                if(updateBulk==10){
+                 updateBulk=0;
+                 //TODO:
+                    //BulkWriteResult bulkWriteResult = collection.;
+
+                }
+//                collection.update(new BasicDBObject().append("word",insert.getKey()),tempisa);
+                //TODO: update with bulk
             }
             else {
                 // the word is not inserted yeeeeet
@@ -173,19 +168,21 @@ public class textTags1 {
                 List<BasicDBObject> URLs = new ArrayList<>();
                 BasicDBObject urlObject = new BasicDBObject();
                 urlObject.put("url", url);
+                urlObject.put("theword", insert.getKey());
                 urlObject.put("tf", insert.getValue().getOccurence());
-                urlObject.put("occurrence", insert.getValue().getTagOccurrences());
-//                urlObject.put("positions", insert.getValue().getPositions());
+                urlObject.put("tag",insert.getValue().getTag());
+                urlObject.put("positions",insert.getValue().getPositions());
 
+//                URLs.add(urlObject);
+//                theWord.put("urls", URLs);
                 URLs.add(urlObject);
                 theWord.put("urls", URLs);
+                newWords. add(theWord);
 
-                collection.insert(theWord);
             }
 
         }
-
-
-        outstream.close();
+        collection.insert(newWords);
+//        outstream.close();
     }
 }

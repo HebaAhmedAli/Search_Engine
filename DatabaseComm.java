@@ -5,22 +5,24 @@ import com.mongodb.MongoClient;
 
 import java.util.*;
 
-public class DatabaseComm {
+public class DatabaseComm{
 
      int occurence;
      String tag;
-     ArrayList<Integer> positions;
+     String theWord;
+     List<Integer> positions;
      Map<String, Integer > wordtags;
 
-    final static String[] neededTags={"p","pre","span","li","h1","h2", "h3", "h4", "h5", "h6"};
+//    final static String[] neededTags={"p","pre","span","li","h1","h2", "h3", "h4", "h5", "h6"};
 
 
     public void addPosition(int pos) {
+
         positions.add(pos);
     }
 
 
-    public ArrayList<Integer> getPositions() {
+    public List<Integer> getPositions() {
         return positions;
     }
 
@@ -30,6 +32,7 @@ public class DatabaseComm {
         occurence=0;
         tag=new String();
         tag="p";
+
     }
 
     public int getOccurence() {
