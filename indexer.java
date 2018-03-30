@@ -43,8 +43,6 @@ public class indexer implements Serializable{
 		} catch (MongoException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
 		}
 
 		while(true) {

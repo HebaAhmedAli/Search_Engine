@@ -384,13 +384,8 @@ public class WebCrawlerWithDepth implements Runnable, Serializable {
 	public void start_crawler() throws InterruptedException {
 
 		long startTime = System.nanoTime();
-		try {
-			mongoClient = new MongoClient();
-			database = mongoClient.getDB("search_engine5");
-		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		mongoClient = new MongoClient();
+		database = mongoClient.getDB("search_engine5");
 
 		try {
 

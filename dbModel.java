@@ -5,14 +5,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class dbModel {
-    static Map<String,Map<String,DatabaseComm>> urlStemmedWords;
+    static public Map<String,Map<String,DatabaseComm>> urlStemmedWords;
+
 
     static stopORstem modifier;
     final static String[] neededTags={"h1","h2", "h3", "h4", "h5", "h6"};
 
 
     dbModel(){
-        urlStemmedWords=new HashMap<String,Map<String,DatabaseComm>>();
+        urlStemmedWords=new HashMap<>();
         modifier=new stopORstem();
     }
 
@@ -75,4 +76,12 @@ public class dbModel {
         }
     }
 
+    public  Map<String, Map<String, DatabaseComm>> getWordsMap() {
+        return urlStemmedWords;
+    }
+
+    public void setUrlStemmedWords(Map<String, Map<String, DatabaseComm>> urlStemmedWords) {
+        dbModel.urlStemmedWords = urlStemmedWords;
+
+    }
 }

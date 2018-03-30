@@ -16,7 +16,7 @@ public class test {
 
 
             MongoClient mongoClient = new MongoClient("localhost", 27017);
-            db = mongoClient.getDB("indexerTest");
+            db = mongoClient.getDB("aabdotest");
             System.out.println("Connected to Database");
 
 
@@ -25,9 +25,11 @@ public class test {
             System.out.println(e);
         }
 
-        DBCollection collection = db.getCollection("aabdo");
+        DBCollection collection = db.getCollection("boys");
 
         System.out.println("Server is ready ");
+
+
 
 
 //        BasicDBObject document = new BasicDBObject();
@@ -142,13 +144,51 @@ public class test {
 //        //TODO:    "docs.<index l doc fel array>.positions" d lazem tgebha w t7oteha ya mnonet 2albe <3
 //        collection.update(new BasicDBObject().append("word","la"),tempisa);
 
-        List<Integer> tags = new ArrayList<Integer>();
-        tags.add(11);
-        tags.add(6);
-        tags.add(569);
-        BasicDBObject doc = new BasicDBObject();
-        doc.append("url", tags);
-        collection.insert(doc);
+
+
+        BulkWriteOperation builder = collection.initializeUnorderedBulkOperation();
+
+
+        BasicDBObject o1= new BasicDBObject();
+        BasicDBObject o2= new BasicDBObject();
+        BasicDBObject o3= new BasicDBObject();
+        BasicDBObject o4= new BasicDBObject();
+        BasicDBObject o5= new BasicDBObject();
+        BasicDBObject o6= new BasicDBObject();
+        BasicDBObject o7= new BasicDBObject();
+
+
+
+        o1.put("name","samir");
+        o1.put("age",23);
+
+
+        o2.put("name","aabdo");
+        o4.put("age",50);
+
+        o3.put("$set",o4);
+
+
+        builder.insert(o1);
+
+        builder.find(o2).update(o3);
+
+        BulkWriteResult result = builder.execute();
+      System.out.println(result.isAcknowledged());
+
+
+
+
+
+
+
+//        List<Integer> tags = new ArrayList<Integer>();
+//        tags.add(11);
+//        tags.add(6);
+//        tags.add(569);
+//        BasicDBObject doc = new BasicDBObject();
+//        doc.append("url", tags);
+//        collection.insert(doc);
 
     }
 

@@ -18,10 +18,11 @@ public class textTags2 {
 
     public static stopwords checkStopWord;
     //final static String[] neededTags={"h1","h2", "h3", "h4", "h5", "h6"};
-    static dbModel runIndexerMap=new dbModel();
-
+    static public dbModel runIndexerMap;
+    static dbInterface dataToDB;
     textTags2(){
         runIndexerMap=new dbModel();
+        dataToDB= new dbInterface();
     }
 
 
@@ -56,8 +57,7 @@ public class textTags2 {
         }
 
         ///////////////////////////////////////////////// Interfacing with DB
-
-
+        dataToDB.initDB("Indexes","Trial",runIndexerMap.getWordsMap(),url,false);
 
     }
 }
