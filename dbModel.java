@@ -54,6 +54,13 @@ public class dbModel {
     }
 
     public void addToURLMap(String originalWord, int position){
+        originalWord=modifier.prepareWord(originalWord);
+        if (originalWord.equals("")){
+            //System.out.println("iam"+originalWord+"7omar");
+
+            return;
+        }
+
 
         //Stemming
         String stemmedWord=modifier.modifyWord(originalWord,"p");

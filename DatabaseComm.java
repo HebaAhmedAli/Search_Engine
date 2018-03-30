@@ -9,7 +9,7 @@ public class DatabaseComm{
     int occurence;
     String tag;
     String theWord;
-    List<Integer> positions;
+    Set<Integer> positions;
     Map<String, Integer > wordtags;
 
 //    final static String[] neededTags={"p","pre","span","li","h1","h2", "h3", "h4", "h5", "h6"};
@@ -22,13 +22,13 @@ public class DatabaseComm{
     }
 
 
-    public List<Integer> getPositions() {
+    public Set<Integer> getPositions() {
         return positions;
     }
 
     public DatabaseComm(){
 //        wordtags=new HashMap<String,Integer >();
-        positions=new ArrayList<Integer>();
+        positions=new HashSet<>();
         occurence=0;
         tag=new String();
         tag="p";

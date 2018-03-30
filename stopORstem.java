@@ -8,9 +8,10 @@ public class stopORstem {
     public String modifyWord(String word,String tag){
 
         Stemmer porterStemmer = new Stemmer();
-        word=word.toLowerCase();
+//        word=word.toLowerCase();
+//        prepareWord(word);
         //Check if Stop word
-        if(tag=="p"||tag=="span"||tag=="pre"||tag=="li")
+        if(tag.equals("p")||tag.equals("span")||tag.equals("pre")||tag.equals("li"))
             if(checkStopWord.ifStopWords(word))
                 return null;
 
@@ -18,12 +19,18 @@ public class stopORstem {
             return null;
 
         //Check if special character
-        word=word.replaceAll("[^a-zA-Z0-9]", "");
-
+//        word=word.replaceAll("[^a-zA-Z0-9]", "");
+        if (word.equals(""))
+            return null;
         //else that: Stem the word
         porterStemmer.add(word);
         porterStemmer.stem();
         return porterStemmer.toString();
 
+    }
+    public String prepareWord(String word){
+        word=word.toLowerCase();
+        word=word.replaceAll("[^a-zA-Z0-9]", "");
+        return word;
     }
 }

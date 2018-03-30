@@ -79,6 +79,7 @@ public class dbInterface {
         for (Map.Entry<String,DatabaseComm> originalWords:interConnection.entrySet()){
             //da ele gwa l array words
             BasicDBObject wordObject = new BasicDBObject();
+            wordObject.put("originalWord",originalWords.getKey());
             wordObject.put("url", url);
             wordObject.put("tf", originalWords.getValue().getPositions().size()); //Attention: dangerous (getOccurrence)
             wordObject.put("tag",originalWords.getValue().getTag());
@@ -166,10 +167,10 @@ public class dbInterface {
             }
 
         }
-        System.out.println("----------->"+wordsFirstinserted);
+        //System.out.println("----------->"+wordsFirstinserted);
         collection.insert(wordsFirstinserted);
         wordsFirstinserted.clear();
-        System.out.println("*_*_*_*_*_*"+wordsFirstinserted);
+        //System.out.println("*_*_*_*_*_*"+wordsFirstinserted);
     }
 
 

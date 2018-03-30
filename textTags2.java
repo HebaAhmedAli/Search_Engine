@@ -42,9 +42,9 @@ public class textTags2 {
 
         ///////////////////////////////////////////////// Interfacing with DB
 
-        synchronized (dataToDB) {
+//        synchronized (dataToDB) {
             dataToDB.initDB(runIndexerMap.getWordsMap(), url, isRecrawling);
-        }
+  //      }
 
 
     }
