@@ -9,7 +9,11 @@ import org.bson.*;
 public class dbInterface {
 
     DB db=null;
-    List<BasicDBObject> wordsFirstinserted;
+    static List<BasicDBObject> wordsFirstinserted;
+    dbInterface(){
+        wordsFirstinserted=new ArrayList<>();
+    }
+
 
 
     public void initDB(String DBname,String DBCollection, Map<String,Map<String,DatabaseComm>> interConnection,String url){
