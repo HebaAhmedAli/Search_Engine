@@ -24,7 +24,7 @@ public class search_engine {
 		{
 			//indexer
 			Object o=new Object();
-			indexer my_indexer= new indexer(1);
+			indexer my_indexer= new indexer(5);
 
 			my_indexer.start_indexer();
 
