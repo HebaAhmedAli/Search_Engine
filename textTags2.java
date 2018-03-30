@@ -18,7 +18,7 @@ public class textTags2 {
 
     public static stopwords checkStopWord;
     //final static String[] neededTags={"h1","h2", "h3", "h4", "h5", "h6"};
-    static dbModel runIndexerMap;
+    static dbModel runIndexerMap=new dbModel();
 
     textTags2(){
         runIndexerMap=new dbModel();

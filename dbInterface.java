@@ -47,7 +47,7 @@ public class dbInterface {
                     wordObject.put("tag",originalWords.getValue().getTag());
                     wordObject.put("positions",originalWords.getValue().getPositions());
                     URLs.add(wordObject);
-                    theWord.put("urls", URLs);
+                    theWord.put("words", URLs);
                     wordsFirstinserted.add(theWord);
                 }
             }

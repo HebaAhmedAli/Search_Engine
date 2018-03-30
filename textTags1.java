@@ -16,7 +16,7 @@ import java.util.*;
 
 public class textTags1 {
 
-    public static stopwords checkStopWord;
+    public static stopORstem checkStopWord;
     static List<DBObject> newWords=new ArrayList<DBObject>();
 
 
@@ -25,7 +25,7 @@ public class textTags1 {
 
     public static void main(String[] args) throws IOException {
 
-        checkStopWord=new stopwords();
+        checkStopWord=new stopORstem();
         textTags1 teTags=new textTags1();
         int updateBulk=0;
         String file="test2.html"; //get from url
@@ -76,7 +76,7 @@ public class textTags1 {
 
                 for (String word : words) {
 
-                    word=teTags.modifyWord(word,tag);
+                    word=checkStopWord.modifyWord(word,tag);
                     if(word==null)
                         continue;
                     if(word.length()==1&&word!="a")
@@ -107,7 +107,7 @@ public class textTags1 {
             if (objToInsert.containsKey(word))
                 continue;
 
-            word=teTags.modifyWord(word,"p");
+            word=checkStopWord.modifyWord(word,"p");
             if(word==null)
                 continue;
             if(word.length()==1&&word!="a")

@@ -12,8 +12,8 @@ public class dbModel {
 
 
     dbModel(){
-        urlStemmedWords=new HashMap<>();
-        stopORstem modifier=new stopORstem();
+        urlStemmedWords=new HashMap<String,Map<String,DatabaseComm>>();
+        modifier=new stopORstem();
     }
 
 
@@ -26,6 +26,7 @@ public class dbModel {
 
                 for (String word : words) {
 
+                    word=word.toLowerCase();
                     String stemmedWord=modifier.modifyWord(word,tag);
                     //check if word is still the original word
                     if(word==null) //then it is not a stopword
@@ -38,9 +39,10 @@ public class dbModel {
                         urlStemmedWords.put(stemmedWord,originalWordObject);
                     }
 //                    urlStemmedWords.get(stemmedWord).get(word).changeTag();  //aman nfse just in case
-//                    }else if (! urlStemmedWords.get(stemmedWord).containsKey(word)){
-//                        urlStemmedWords.get(stemmedWord).get(word).changeTag();
 //                    }
+                      else if (! urlStemmedWords.get(stemmedWord).containsKey(word)){
+                        urlStemmedWords.get(stemmedWord).put(word,new DatabaseComm());
+                    }
                     urlStemmedWords.get(stemmedWord).get(word).changeTag();
 
 
