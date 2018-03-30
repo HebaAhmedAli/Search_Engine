@@ -26,6 +26,7 @@ public class indexer implements Serializable{
 	boolean is_Recrawling=false;
 	boolean first=true;
 	long startTime;
+	textTags2 textTags2 = new textTags2();
 
 	public indexer()
 	{
@@ -33,7 +34,6 @@ public class indexer implements Serializable{
 	}
 
 	public void start_indexer() throws ClassNotFoundException{
-
 
 
 
@@ -50,7 +50,9 @@ public class indexer implements Serializable{
 			try{
 
 				System.out.println("url from crawler 2--->"+url.toString());
-				textTags.indexing(d,url.toString(),is_Recrawling);
+				textTags2.indexing(d,url.toString(),is_Recrawling);
+
+				//textTags.indexing(d,url.toString(),is_Recrawling);
 			}catch (IOException e){
 				System.out.println(e);
 			}

@@ -19,6 +19,7 @@ public class DatabaseComm{
     public void addPosition(int pos) {
 
         positions.add(pos);
+        ++occurence;
     }
 
 

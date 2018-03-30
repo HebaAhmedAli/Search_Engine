@@ -157,7 +157,7 @@ public class dbInterface {
             }
 
         }
-
+        collection.insert(wordsFirstinserted);
 
     }
 
