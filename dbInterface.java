@@ -13,6 +13,25 @@ public class dbInterface {
     dbInterface(){
         wordsFirstinserted=new ArrayList<>();
     }
+    public void insertData(Map.Entry<String,DatabaseComm> originalWords,String url){
+        BasicDBObject toInsert=new BasicDBObject();
+
+        toInsert.put("idf", 1);
+
+        List<BasicDBObject> URLs = new ArrayList<>();
+        BasicDBObject wordObject = new BasicDBObject();
+        wordObject.put("url", url);
+        wordObject.put("theword", originalWords.getKey());
+        wordObject.put("tf", originalWords.getValue().getOccurence());
+        wordObject.put("tag",originalWords.getValue().getTag());
+        wordObject.put("positions",originalWords.getValue().getPositions());
+        URLs.add(wordObject);
+        toInsert.put("words", URLs);
+        wordsFirstinserted.add(toInsert);
+
+
+
+    }
 
 
 
@@ -39,20 +58,7 @@ public class dbInterface {
                 //TODO: check for the word to be inserted
             }else{
                 for (Map.Entry<String,DatabaseComm> originalWords:stemmedword.getValue().entrySet()){
-                    BasicDBObject toInsert=new BasicDBObject();
-
-                    theWord.put("idf", 1);
-
-                    List<BasicDBObject> URLs = new ArrayList<>();
-                    BasicDBObject wordObject = new BasicDBObject();
-                    wordObject.put("url", url);
-                    wordObject.put("theword", originalWords.getKey());
-                    wordObject.put("tf", originalWords.getValue().getOccurence());
-                    wordObject.put("tag",originalWords.getValue().getTag());
-                    wordObject.put("positions",originalWords.getValue().getPositions());
-                    URLs.add(wordObject);
-                    theWord.put("words", URLs);
-                    wordsFirstinserted.add(theWord);
+                    insertData(originalWords,url);
                 }
             }
 
