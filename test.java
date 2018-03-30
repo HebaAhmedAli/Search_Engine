@@ -2,8 +2,6 @@
 
 import com.mongodb.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class test {
@@ -16,7 +14,7 @@ public class test {
 
 
             MongoClient mongoClient = new MongoClient("localhost", 27017);
-            db = mongoClient.getDB("aabdotest");
+            db = mongoClient.getDB("search_engine");
             System.out.println("Connected to Database");
 
 
@@ -25,68 +23,40 @@ public class test {
             System.out.println(e);
         }
 
-        DBCollection collection = db.getCollection("boys");
 
-        System.out.println("Server is ready ");
-
+       System.out.println("Server is ready ");
 
 
+        BasicDBObject theWord = new BasicDBObject();
 
-//        BasicDBObject document = new BasicDBObject();
-//        document.put("word", "la");
-//
-//
-//        BasicDBList docs = new BasicDBList();
-//        BasicDBObject doc = new BasicDBObject();
-//        doc.put("theword", "la2");
-//
-//        BasicDBList positions = new BasicDBList();
-//
-//        BasicDBObject position = new BasicDBObject();
-//        position.put("docnum",2);
-//        position.put("wordpos", 4);
-//
-//        positions.add(position);
-//
-//
-//        doc.put("positions",positions);
-//        docs.add(doc);
-//
-//        document.put("docs", docs);
-//
-//        collection.insert(document);
+        theWord.put("word","german");
 
 
-//        BasicDBObject theWord = new BasicDBObject();
-//
-//        theWord.put("word","german");
-//
+        DBCollection collection = db.getCollection("wordsIndex");
+/*
+*
+* nm7 kol ele y7os l url
+* */
+        String SURL="https://www.geeksforgeeks.org/";
+        BasicDBObject q1 = new BasicDBObject();
+        BasicDBObject q2 = new BasicDBObject();
+        BasicDBObject q3 = new BasicDBObject();
 
-///*
-//*
-//* nm7 kol ele y7os l url
-//* */
-//        String SURL="https://www.geeksforgeeks.org/";
-//        BasicDBObject q1 = new BasicDBObject();
-//        BasicDBObject q2 = new BasicDBObject();
-//        BasicDBObject q3 = new BasicDBObject();
-//
-//        q1.put("url",SURL);
-//        q2.put("",q1);
-//        q3.put("urls",q1);
-//
-//        DBObject update_idf = new BasicDBObject();
-//        update_idf.put("$inc", new BasicDBObject("idf", -1));
-//        collection.updateMulti(q3, update_idf);
-//
-//        DBObject update = new BasicDBObject();
-//		update.put("$pull", q3);
-//		collection.updateMulti(q3, update);
-//
-//
-//         System.out.println("5alst ya bashr...");
-//
-/*DBCursor result = collection.find(q3);
+        q1.put("url",SURL);
+        q2.put("",q1);
+        q3.put("urls",q2);
+
+        DBObject update_idf = new BasicDBObject();
+        update_idf.put("$inc", new BasicDBObject("idf", -1));
+        collection.updateMulti(q3, update_idf);
+        
+        DBObject update = new BasicDBObject();
+		update.put("$pull", q3);
+		collection.updateMulti(q3, update);
+		
+		
+         System.out.println("5alst ya bashr...");
+        /*DBCursor result = collection.find(q3);
         while (result.hasNext()) {
             BasicDBObject querry = (BasicDBObject) result.next();//new BasicDBObject("url",SURL);
             DBObject update_idf = new BasicDBObject();
@@ -134,62 +104,15 @@ public class test {
 //        occurence.add(occurenceTag2);
 //
 //
-*/
-//        BasicDBObject docObject = new BasicDBObject();
-//        docObject.put("docnum", 2);
-//        docObject.put("wordpos", 4);
+
+//        BasicDBObject urlObject = new BasicDBObject();
+//        urlObject.put("url", "https://bos_b2a_3l4an_tb2a_3arf");
 //
 //        BasicDBObject tempisa = new BasicDBObject();
-//        tempisa.put("$addToSet", new BasicDBObject().append("docs.0.positions", docObject));
-//        //TODO:    "docs.<index l doc fel array>.positions" d lazem tgebha w t7oteha ya mnonet 2albe <3
-//        collection.update(new BasicDBObject().append("word","la"),tempisa);
+//        tempisa.put("$push", new BasicDBObject().append("urls", urlObject));
+//        collection.update(new BasicDBObject().append("word","shallow"),tempisa);
 
-
-
-        BulkWriteOperation builder = collection.initializeUnorderedBulkOperation();
-
-
-        BasicDBObject o1= new BasicDBObject();
-        BasicDBObject o2= new BasicDBObject();
-        BasicDBObject o3= new BasicDBObject();
-        BasicDBObject o4= new BasicDBObject();
-        BasicDBObject o5= new BasicDBObject();
-        BasicDBObject o6= new BasicDBObject();
-        BasicDBObject o7= new BasicDBObject();
-
-
-
-        o1.put("name","samir");
-        o1.put("age",23);
-
-
-        o2.put("name","aabdo");
-        o4.put("age",50);
-
-        o3.put("$set",o4);
-
-
-        builder.insert(o1);
-
-        builder.find(o2).update(o3);
-
-        BulkWriteResult result = builder.execute();
-      System.out.println(result.isAcknowledged());
-
-
-
-
-
-
-
-//        List<Integer> tags = new ArrayList<Integer>();
-//        tags.add(11);
-//        tags.add(6);
-//        tags.add(569);
-//        BasicDBObject doc = new BasicDBObject();
-//        doc.append("url", tags);
-//        collection.insert(doc);
-
+*/
     }
 
 

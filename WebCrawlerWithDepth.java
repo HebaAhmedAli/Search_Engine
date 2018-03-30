@@ -1,3 +1,5 @@
+
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -6,7 +8,7 @@ import org.jsoup.UncheckedIOException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-//import org.omg.CORBA.portable.InputStream;
+import org.omg.CORBA.portable.InputStream;
 import org.w3c.dom.Node;
 
 import java.awt.List;
@@ -245,7 +247,23 @@ public class WebCrawlerWithDepth implements Runnable, Serializable {
 
 		// send the url after it's document inserted in db
 		// write_document(url.toString(), d);
-		MPI.COMM_WORLD.Send(yourBytes_url, 0, yourBytes_url.length, MPI.BYTE, 1, crawling);
+		Request request = MPI.COMM_WORLD.Isend(yourBytes_url, 0, yourBytes_url.length, MPI.BYTE, 1, crawling);
+        
+		/*if(request.Test().Test_cancelled())
+		{
+			System.out.println("request cancelled...");
+		}*/
+
+	}
+
+	public void send_to_indexer_end() throws TransformerException, IOException {
+
+
+		int[] end=new int[1];
+		end[0]=5;
+		MPI.COMM_WORLD.Send(end, 0, 1, MPI.INT, 1,0);
+
+
 
 	}
 
@@ -429,6 +447,18 @@ public class WebCrawlerWithDepth implements Runnable, Serializable {
 														 
 														 */
 
+		Runtime.getRuntime().addShutdownHook(new Thread()
+		{
+			public void run()
+			{
+				System.out.println("Shutdown Hook is running !");
+				write_links_toDb();
+
+				write_unvisited_toDb();
+			}
+		});
+
+		//System.exit(0);
 		Thread[] threads = new Thread[no_of_threads];
 		for (Integer i = 1; i <= no_of_threads; i++) {
 			Thread t1 = new Thread(new WebCrawlerWithDepth(no_of_threads));
@@ -478,17 +508,27 @@ public class WebCrawlerWithDepth implements Runnable, Serializable {
 
 		//}
 
+		System.out.println("the End of crawler waitt..............................");
 
-		System.out.println("the End..............................");
+		try {
+			send_to_indexer_end();
+		} catch (TransformerException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+		System.out.println("the End of crawler..............................");
 
 		System.out.println("time between crawling and reclawling--->"+(System.nanoTime()-endCrawlerTime));
-		System.out.println("total time--->"+(System.nanoTime()-startTime));
+		System.out.println("total time crawling--->"+(System.nanoTime()-startTime));
+
 
 		links.clear();
 		unvisited.clear();
 		printWriter.close();
 		printWriter_url.close();
-		timer.cancel();
+		//timer.cancel();
 
 	}
 

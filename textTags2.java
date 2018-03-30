@@ -1,5 +1,4 @@
 
-
 import com.mongodb.*;
 import com.mongodb.bulk.BulkWriteResult;
 import org.jsoup.Jsoup;
@@ -21,48 +20,12 @@ public class textTags2 {
     static public dbModel runIndexerMap;
     static dbInterface dataToDB;
     textTags2(){
-//        runIndexerMap=new dbModel();
-//        dataToDB= new dbInterface();
+        runIndexerMap=new dbModel();
+        dataToDB= new dbInterface("search_engine5","WordsIndex");
     }
 
 
-    public static void main(String[] args) throws IOException {
 
-//        runIndexerMap=new dbModel();
-//        dataToDB= new dbInterface();
-//
-//        int updateBulk=0;
-//        String file="test2.html"; //get from url
-//        //unique for the check on the whole txt afterwards
-//
-//        BufferedReader reader = new BufferedReader(new FileReader (file));
-//        String line,getIt="",url="";
-//
-//        try {
-//            while((line = reader.readLine()) != null) {
-//                getIt+=line;
-//                }
-//        } finally {
-//            reader.close();
-//        }
-//        final String html= getIt;
-//        ///////////////////////////////////////////
-//        Document doc = Jsoup.parse(html);
-//        String innerBody=doc.select("body").text();
-//        /////////////////////////////////////////////////
-//
-//        runIndexerMap.addHeaderWords(doc);
-//        Queue<String> wordsofURL= new LinkedList<>(Arrays.asList(innerBody.split(" ")));
-//        int i=0;
-//        for (String word:wordsofURL){
-//            runIndexerMap.addToURLMap(word,i);
-//            ++i;
-//        }
-//
-//        ///////////////////////////////////////////////// Interfacing with DB
-//        dataToDB.initDB("Indexes","wordindex",runIndexerMap.getWordsMap(),url,false);
-
-    }
 
     public static void indexing(Document doc,String url,boolean isRecrawling)throws IOException{
 
@@ -78,8 +41,10 @@ public class textTags2 {
         }
 
         ///////////////////////////////////////////////// Interfacing with DB
-        dataToDB.initDB("Indexes","WordsIndex",runIndexerMap.getWordsMap(),url,isRecrawling);
 
+        synchronized (dataToDB) {
+            dataToDB.initDB(runIndexerMap.getWordsMap(), url, isRecrawling);
+        }
 
 
     }

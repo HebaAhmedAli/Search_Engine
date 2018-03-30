@@ -16,14 +16,15 @@ public class search_engine {
 		if(rank==0)
 		{
 			//crawler
-			//handelo eh ?
+			//handelo eh ? 
 			WebCrawlerWithDepth my_webcrawl = new WebCrawlerWithDepth(5);
 			my_webcrawl.start_crawler();
 		}
 		else if(rank==1)
 		{
 			//indexer
-			indexer my_indexer= new indexer();
+			Object o=new Object();
+			indexer my_indexer= new indexer(/*o*/);
 
 			my_indexer.start_indexer();
 

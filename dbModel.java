@@ -41,7 +41,7 @@ public class dbModel {
                     }
 //                    urlStemmedWords.get(stemmedWord).get(word).changeTag();  //aman nfse just in case
 //                    }
-                      else if (! urlStemmedWords.get(stemmedWord).containsKey(word)){
+                    else if (! urlStemmedWords.get(stemmedWord).containsKey(word)){
                         urlStemmedWords.get(stemmedWord).put(word,new DatabaseComm());
                     }
                     urlStemmedWords.get(stemmedWord).get(word).changeTag();

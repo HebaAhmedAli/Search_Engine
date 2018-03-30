@@ -1,4 +1,3 @@
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
@@ -7,11 +6,11 @@ import java.util.*;
 
 public class DatabaseComm{
 
-     int occurence;
-     String tag;
-     String theWord;
-     List<Integer> positions;
-     Map<String, Integer > wordtags;
+    int occurence;
+    String tag;
+    String theWord;
+    List<Integer> positions;
+    Map<String, Integer > wordtags;
 
 //    final static String[] neededTags={"p","pre","span","li","h1","h2", "h3", "h4", "h5", "h6"};
 
@@ -46,12 +45,12 @@ public class DatabaseComm{
 
     public void insertWord(String tag){
 
-            occurence++;
-            if(wordtags.containsKey(tag)){
-                wordtags.put(tag,wordtags.get(tag)+1);
-            }
-            else
-                wordtags.put(tag,1);
+        occurence++;
+        if(wordtags.containsKey(tag)){
+            wordtags.put(tag,wordtags.get(tag)+1);
+        }
+        else
+            wordtags.put(tag,1);
 
     }
     public List<BasicDBObject> getTagOccurrences(){
